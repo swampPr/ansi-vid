@@ -1,12 +1,14 @@
-/*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
-*/
+// Package cmd provides cmd  ->  The root command of "ansi-vid"
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"github.com/swampPr/ansi-vid/internal/render"
 )
 
 var rootCmd = &cobra.Command{
@@ -15,27 +17,28 @@ var rootCmd = &cobra.Command{
 	RunE:  execAnsi,
 }
 
-func execAnsi(cmd *cobra.Command, args []string) error {
+func execAnsi(_ *cobra.Command, args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("please input a path to the source video")
+	}
+
+	absPath, err := filepath.Abs(args[0])
+	if err != nil {
+		return fmt.Errorf("an error occurred: %w", err)
+	}
+
+	err = render.Process(absPath)
+	if err != nil {
+		return fmt.Errorf("an error occurred: %w", err)
+	}
+
 	return nil
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// Execute function  ->  Executes the command
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
-}
-
-func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ansi-vid.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
