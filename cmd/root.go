@@ -42,3 +42,12 @@ func Execute() {
 		os.Exit(1)
 	}
 }
+
+func init() {
+	rootCmd.SetHelpTemplate(`
+Render your video as ANSI art.
+
+Usage:
+  ansi-vid [path to video]
+`)
+}
